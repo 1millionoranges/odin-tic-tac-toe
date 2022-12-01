@@ -2,6 +2,7 @@ class Board
     def initialize(size)
         @size = size
         @board_state = Array.new(size) {Array.new(size, 0)}
+        @final_winner = ""
     end
 
     def print_board
@@ -51,24 +52,45 @@ class Board
     def check_winner
         return (check_diagonal_winner || check_horizontal_winner || check_vertical_winner)
     end
-    
+    def valid_move?(x,y)
+        empty_spot = @board_state[x][y] == 0
+        in_bounds_x = (0<=x && x < @size)
+        in_bounds_y = (0<=y && y < @size)
+        return empty_spot && in_bounds_x && in_bounds_y
+    end
     def get_move(player)
         puts "\nPlease enter your move"
         move_string = gets.chomp
         move_arr = move_string.split(",")
         move_x_pos = move_arr[0].to_i
         move_y_pos = move_arr[1].to_i
-        add_move(move_x_pos, move_y_pos, player)
+        if (valid_move?(move_x_pos,move_y_pos)) then
+            add_move(move_x_pos, move_y_pos, player)
+        else
+            puts "Invalid move! Try again."
+            get_move(player)
+        end
     end
 
     def game_loop
         
-        while (!check_winner) do 
+        loop do 
             print_board
             get_move("X")
+            if(check_winner) then
+                @final_winner = "X"
+                break
+            end
+            print_board
+            get_move("O")
+            if(check_winner) then
+                @final_winner = "O"
+                break
+            end
         end
         print_board
         puts "\n\n\nWe have a winner!"
+        puts "Congratulations, #{@final_winner}, You won!"
     end
 end
 
