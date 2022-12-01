@@ -6,7 +6,6 @@ class Board
     end
 
     def print_board
-        puts "printing board"
         @board_state.each do |row|
             row.each do |spot|
                 print spot.to_s + ("   ")
@@ -44,13 +43,18 @@ class Board
         bottom_left_winner = bottom_left != 0
         @board_state.each_index do |i|
             top_left_winner = false if(@board_state[i][i] != top_left)
-            bottom_left_winner = false if(@board_state[-i][i] != bottom_left)
+            bottom_left_winner = false if(@board_state[-(i + 1)][i] != bottom_left)
         end
         return (top_left_winner || bottom_left_winner)
     end
 
     def check_winner
         return (check_diagonal_winner || check_horizontal_winner || check_vertical_winner)
+    end
+    def check_tie
+        @board_state.all? do |row|
+            !row.include?(0)
+        end
     end
     def valid_move?(x,y)
         empty_spot = @board_state[x][y] == 0
@@ -81,16 +85,25 @@ class Board
                 @final_winner = "X"
                 break
             end
+            if(check_tie)
+                @final_winner = "tie"
+                break
+            end
             print_board
             get_move("O")
             if(check_winner) then
                 @final_winner = "O"
                 break
             end
+            
         end
         print_board
-        puts "\n\n\nWe have a winner!"
-        puts "Congratulations, #{@final_winner}, You won!"
+        if(@final_winner == "tie")
+            puts ("It was a tie!")
+        else
+            puts "\n\n\nWe have a winner!"
+            puts "Congratulations, #{@final_winner}, You won!"
+        end
     end
 end
 
