@@ -8,7 +8,11 @@ class Board
     def print_board
         @board_state.each do |row|
             row.each do |spot|
-                print spot.to_s + ("   ")
+                if(spot != 0)
+                    print spot.to_s + ("   ")
+                else
+                    print "-" + ("   ")
+                end
             end
             print "\n\n"
         end
